@@ -15,10 +15,10 @@
 import HummingbirdCore
 
 /// URI Path Trie Builder
-struct RouterPathTrieBuilder<Value: Sendable> {
+public struct RouterPathTrieBuilder<Value: Sendable> {
     var root: Node
 
-    init() {
+    public init() {
         self.root = Node(key: .null, output: nil)
     }
 
@@ -27,7 +27,7 @@ struct RouterPathTrieBuilder<Value: Sendable> {
     ///   - entry: Path for entry
     ///   - value: Value to add to this path if one does not exist already
     ///   - onAdd: How to edit the value at this path
-    func addEntry(_ entry: RouterPath, value: @autoclosure () -> Value, onAdd: (Node) -> Void = { _ in }) {
+    public func addEntry(_ entry: RouterPath, value: @autoclosure () -> Value, onAdd: (Node) -> Void = { _ in }) {
         var node = self.root
         for key in entry {
             node = node.addChild(key: key, output: nil)
@@ -40,12 +40,12 @@ struct RouterPathTrieBuilder<Value: Sendable> {
         }
     }
 
-    func build() -> RouterPathTrie<Value> {
+    public func build() -> RouterPathTrie<Value> {
         .init(root: self.root.build())
     }
 
     /// Trie Node. Each node represents one component of a URI path
-    final class Node {
+    public final class Node {
         let key: RouterPath.Element
         var children: [Node]
         var value: Value?
@@ -83,7 +83,7 @@ struct RouterPathTrieBuilder<Value: Sendable> {
 }
 
 /// Trie used by HBRouter responder
-struct RouterPathTrie<Value: Sendable>: Sendable {
+public struct RouterPathTrie<Value: Sendable>: Sendable {
     let root: Node
 
     /// Initialise RouterPathTrie
@@ -95,7 +95,7 @@ struct RouterPathTrie<Value: Sendable>: Sendable {
     /// Get value from trie and any parameters from capture nodes
     /// - Parameter path: Path to process
     /// - Returns: value and parameters
-    func getValueAndParameters(_ path: String) -> (value: Value, parameters: HBParameters?)? {
+    public func getValueAndParameters(_ path: String) -> (value: Value, parameters: HBParameters?)? {
         let pathComponents = path.split(separator: "/", omittingEmptySubsequences: true)
         var parameters: HBParameters?
         var node = self.root
