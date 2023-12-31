@@ -15,14 +15,15 @@
 import NIOCore
 import ServiceContextModule
 
-/// Protocol for object that produces a response given a request
+/// Protocol for object that produces an output given a input and a context
 ///
-/// This is the core protocol for Hummingbird. It defines an object that can respond to a request.
+/// This is the core protocol for Hummingbird. It defines an object that can respond to
+/// an input and context.
 public protocol Responder<Input, Output, Context>: Sendable {
     associatedtype Input
     associatedtype Output
     associatedtype Context
-    /// Return EventLoopFuture that will be fulfilled with response to the request supplied
+    /// Return response to the input supplied
     @Sendable func respond(to request: Input, context: Context) async throws -> Output
 }
 
@@ -41,4 +42,5 @@ public struct CallbackResponder<Input, Output, Context>: Responder {
 
 /// Specialisation of Responder where the Input is a HBRequest and the Output is a HBResponse
 public typealias HBResponder<Context> = Responder<HBRequest, HBResponse, Context>
+/// Specialisation of CallbackResponder where the Input is a HBRequest and the Output is a HBResponse
 public typealias HBCallbackResponder<Context> = CallbackResponder<HBRequest, HBResponse, Context>
