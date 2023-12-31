@@ -23,7 +23,7 @@ import NIOPosix
 import ServiceLifecycle
 
 /// Test sending values to requests to router. This does not setup a live server
-struct HBXCTRouter<Responder: HBResponder>: HBXCTApplication where Responder.Context: HBBaseRequestContext {
+struct HBXCTRouter<Responder: HBResponder>: HBXCTApplication where Responder.Context: HBBaseRequestContext, Responder.Input == HBRequest, Responder.Output == HBResponse {
     let responder: Responder
     let services: [any Service]
     let logger: Logger

@@ -57,7 +57,7 @@ public final class HBRouter<Context: HBBaseRequestContext>: HBRouterMethods {
     ///   - path: URI path
     ///   - method: http method
     ///   - responder: handler to call
-    public func add(_ path: String, method: HTTPRequest.Method, responder: any Responder<HBRequest, HBResponse, Context>) {
+    public func add(_ path: String, method: HTTPRequest.Method, responder: any HBResponder<HBRequest, HBResponse, Context>) {
         // ensure path starts with a "/" and doesn't end with a "/"
         let path = "/\(path.dropSuffix("/").dropPrefix("/"))"
         self.trie.addEntry(.init(path), value: HBEndpointResponders(path: path)) { node in
@@ -66,7 +66,7 @@ public final class HBRouter<Context: HBBaseRequestContext>: HBRouterMethods {
     }
 
     /// build router
-    public func buildResponder() -> some Responder<HBRequest, HBResponse, Context> {
+    public func buildResponder() -> some HBResponder<HBRequest, HBResponse, Context> {
         HBRouterResponder(context: Context.self, trie: self.trie.build(), notFoundResponder: self.middlewares.constructResponder(finalResponder: NotFoundResponder<Context>()))
     }
 

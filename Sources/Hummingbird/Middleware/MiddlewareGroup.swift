@@ -36,7 +36,7 @@ public final class MiddlewareGroup<Input, Output, Context> {
     /// Construct responder chain from this middleware group
     /// - Parameter finalResponder: The responder the last middleware calls
     /// - Returns: Responder chain
-    public func constructResponder(finalResponder: any Responder<Input, Output, Context>) -> any Responder<Input, Output, Context> {
+    public func constructResponder(finalResponder: any HBResponder<Input, Output, Context>) -> any HBResponder<Input, Output, Context> {
         var currentResponser = finalResponder
         for i in (0..<self.middlewares.count).reversed() {
             let responder = MiddlewareResponder(middleware: self.middlewares[i], next: currentResponser.respond(to:context:))
