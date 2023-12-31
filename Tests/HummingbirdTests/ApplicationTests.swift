@@ -490,7 +490,7 @@ final class ApplicationTests: XCTestCase {
         struct MyApp: HBApplicationProtocol {
             typealias Context = HBBasicRequestContext
 
-            var responder: some HBResponder<HBRequest, HBResponse, Context> {
+            var responder: some HBResponder<Context> {
                 let router = HBRouter(context: Context.self)
                 router.get("/hello") { _, context -> ByteBuffer in
                     return context.allocator.buffer(string: "GET: Hello")

@@ -16,7 +16,7 @@ import HTTPTypes
 import HummingbirdCore
 import NIOCore
 
-/// Create rules for routing requests and then create `HBResponder` that will follow these rules.
+/// Create rules for routing requests and then create `Responder` that will follow these rules.
 ///
 /// `HBRouter` requires an implementation of  the `on(path:method:use)` functions but because it
 /// also conforms to `HBRouterMethods` it is also possible to call the method specific functions `get`, `put`,
@@ -57,7 +57,7 @@ public final class HBRouter<Context: HBBaseRequestContext>: HBRouterMethods {
     ///   - path: URI path
     ///   - method: http method
     ///   - responder: handler to call
-    public func add(_ path: String, method: HTTPRequest.Method, responder: any HBResponder<HBRequest, HBResponse, Context>) {
+    public func add(_ path: String, method: HTTPRequest.Method, responder: any HBResponder<Context>) {
         // ensure path starts with a "/" and doesn't end with a "/"
         let path = "/\(path.dropSuffix("/").dropPrefix("/"))"
         self.trie.addEntry(.init(path), value: HBEndpointResponders(path: path)) { node in
@@ -66,7 +66,7 @@ public final class HBRouter<Context: HBBaseRequestContext>: HBRouterMethods {
     }
 
     /// build router
-    public func buildResponder() -> some HBResponder<HBRequest, HBResponse, Context> {
+    public func buildResponder() -> some HBResponder<Context> {
         HBRouterResponder(context: Context.self, trie: self.trie.build(), notFoundResponder: self.middlewares.constructResponder(finalResponder: NotFoundResponder<Context>()))
     }
 
@@ -90,7 +90,7 @@ public final class HBRouter<Context: HBBaseRequestContext>: HBRouterMethods {
 }
 
 /// Responder that return a not found error
-struct NotFoundResponder<Context: HBBaseRequestContext>: HBResponder {
+struct NotFoundResponder<Context: HBBaseRequestContext>: Responder {
     func respond(to request: HBRequest, context: Context) throws -> HBResponse {
         throw HBHTTPError(.notFound)
     }

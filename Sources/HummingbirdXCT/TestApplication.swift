@@ -22,12 +22,12 @@ import ServiceLifecycle
 ///
 /// This is needed to override the `onServerRunning` function
 struct TestApplication<BaseApp: HBApplicationProtocol>: HBApplicationProtocol, Service {
-    typealias Responder = BaseApp.Responder
+    typealias AppResponder = BaseApp.AppResponder
     typealias ChildChannel = BaseApp.ChildChannel
 
     let base: BaseApp
 
-    var responder: Responder {
+    var responder: AppResponder {
         get async throws { try await self.base.responder }
     }
 

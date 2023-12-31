@@ -98,7 +98,7 @@ extension HBRouterMethods {
     func constructResponder(
         options: HBRouterMethodOptions,
         use closure: @Sendable @escaping (HBRequest, Context) async throws -> some HBResponseGenerator
-    ) -> HBCallbackResponder<HBRequest, HBResponse, Context> {
+    ) -> HBCallbackResponder<Context> {
         return HBCallbackResponder { request, context in
             let output = try await closure(request, context)
             return try output.response(from: request, context: context)

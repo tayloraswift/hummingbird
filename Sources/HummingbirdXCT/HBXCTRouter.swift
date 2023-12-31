@@ -23,12 +23,12 @@ import NIOPosix
 import ServiceLifecycle
 
 /// Test sending values to requests to router. This does not setup a live server
-struct HBXCTRouter<Responder: HBResponder>: HBXCTApplication where Responder.Context: HBBaseRequestContext, Responder.Input == HBRequest, Responder.Output == HBResponse {
-    let responder: Responder
+struct HBXCTRouter<AppResponder: Responder>: HBXCTApplication where AppResponder.Context: HBBaseRequestContext, AppResponder.Input == HBRequest, AppResponder.Output == HBResponse {
+    let responder: AppResponder
     let services: [any Service]
     let logger: Logger
 
-    init<App: HBApplicationProtocol>(app: App) async throws where App.Responder == Responder {
+    init<App: HBApplicationProtocol>(app: App) async throws where App.AppResponder == AppResponder {
         self.responder = try await app.responder
         self.services = app.services
         self.logger = app.logger
@@ -65,7 +65,7 @@ struct HBXCTRouter<Responder: HBResponder>: HBXCTApplication where Responder.Con
     /// HBXCTRouter client. Constructs an `HBRequest` sends it to the router and then converts
     /// resulting response back to XCT response type
     struct Client: HBXCTClientProtocol {
-        let responder: Responder
+        let responder: AppResponder
         let logger: Logger
 
         func execute(uri: String, method: HTTPRequest.Method, headers: HTTPFields, body: ByteBuffer?) async throws -> HBXCTResponse {
@@ -75,7 +75,7 @@ struct HBXCTRouter<Responder: HBResponder>: HBXCTApplication where Responder.Con
                     head: .init(method: method, scheme: "http", authority: "localhost", path: uri, headerFields: headers),
                     body: .stream(streamer)
                 )
-                let context = Responder.Context(
+                let context = AppResponder.Context(
                     allocator: ByteBufferAllocator(),
                     logger: loggerWithRequestId(self.logger)
                 )

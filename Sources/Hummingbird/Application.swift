@@ -44,14 +44,14 @@ public enum EventLoopGroupProvider {
 
 public protocol HBApplicationProtocol: Service where Context: HBRequestContext {
     /// Responder that generates a response from a requests and context
-    associatedtype Responder: HBResponder<HBRequest, HBResponse, Context>
+    associatedtype AppResponder: HBResponder<Context>
     /// Child Channel setup. This defaults to support HTTP1
     associatedtype ChildChannel: HBChildChannel & HTTPChannelHandler = HTTP1Channel
     /// Context passed with HBRequest to responder
-    typealias Context = Responder.Context
+    typealias Context = AppResponder.Context
 
     /// Build the responder
-    var responder: Responder { get async throws }
+    var responder: AppResponder { get async throws }
     /// Server channel setup
     var server: HBHTTPChannelBuilder<ChildChannel> { get }
 
@@ -94,7 +94,7 @@ extension HBApplicationProtocol {
 
         // Function responding to HTTP request
         @Sendable func respond(to request: HBRequest, channel: Channel) async throws -> HBResponse {
-            let context = Self.Responder.Context(
+            let context = Self.AppResponder.Context(
                 channel: channel,
                 logger: loggerWithRequestId(self.logger)
             )
@@ -161,17 +161,17 @@ public func loggerWithRequestId(_ logger: Logger) -> Logger {
 /// try await app.runService()
 /// ```
 /// Editing the application setup after calling `runService` will produce undefined behaviour.
-public struct HBApplication<Responder: HBResponder, ChildChannel: HBChildChannel & HTTPChannelHandler>: HBApplicationProtocol where Responder.Context: HBRequestContext, Responder.Input == HBRequest, Responder.Output == HBResponse {
-    public typealias Context = Responder.Context
+public struct HBApplication<AppResponder: Responder, ChildChannel: HBChildChannel & HTTPChannelHandler>: HBApplicationProtocol where AppResponder.Context: HBRequestContext, AppResponder.Input == HBRequest, AppResponder.Output == HBResponse {
+    public typealias Context = AppResponder.Context
     public typealias ChildChannel = ChildChannel
-    public typealias Responder = Responder
+    public typealias AppResponder = AppResponder
 
     // MARK: Member variables
 
     /// event loop group used by application
     public let eventLoopGroup: EventLoopGroup
     /// routes requests to requestResponders based on URI
-    public let responder: Responder
+    public let responder: AppResponder
     /// Configuration
     public var configuration: HBApplicationConfiguration
     /// Logger
@@ -187,7 +187,7 @@ public struct HBApplication<Responder: HBResponder, ChildChannel: HBChildChannel
 
     /// Initialize new Application
     public init(
-        responder: Responder,
+        responder: AppResponder,
         server: HBHTTPChannelBuilder<ChildChannel> = .http1(),
         configuration: HBApplicationConfiguration = HBApplicationConfiguration(),
         eventLoopGroupProvider: EventLoopGroupProvider = .singleton
@@ -213,7 +213,7 @@ public struct HBApplication<Responder: HBResponder, ChildChannel: HBChildChannel
         self.services.append(contentsOf: services)
     }
 
-    public func buildResponder() async throws -> Responder {
+    public func buildResponder() async throws -> AppResponder {
         return self.responder
     }
 

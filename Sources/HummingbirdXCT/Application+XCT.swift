@@ -61,7 +61,7 @@ public struct XCTTestingSetup {
 ///     }
 /// }
 /// ```
-extension HBApplicationProtocol where Responder.Context: HBRequestContext {
+extension HBApplicationProtocol where AppResponder.Context: HBRequestContext {
     // MARK: Initialization
 
     /// Creates a version of `HBApplication` that can be used for testing code

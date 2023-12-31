@@ -14,14 +14,14 @@
 
 /// Directs requests to handlers based on the request uri and method.
 ///
-/// Conforms to `HBResponder` so need to provide its own implementation of
+/// Conforms to `Responder` so need to provide its own implementation of
 /// `func respond(to request: HBRequest, context: Context) async throws -> HBResponse`.
 ///
-struct HBRouterResponder<Context: HBBaseRequestContext>: HBResponder {
+struct HBRouterResponder<Context: HBBaseRequestContext>: Responder {
     let trie: RouterPathTrie<HBEndpointResponders<Context>>
-    let notFoundResponder: any HBResponder<HBRequest, HBResponse, Context>
+    let notFoundResponder: any HBResponder<Context>
 
-    init(context: Context.Type, trie: RouterPathTrie<HBEndpointResponders<Context>>, notFoundResponder: any HBResponder<HBRequest, HBResponse, Context>) {
+    init(context: Context.Type, trie: RouterPathTrie<HBEndpointResponders<Context>>, notFoundResponder: any HBResponder<Context>) {
         self.trie = trie
         self.notFoundResponder = notFoundResponder
     }

@@ -66,8 +66,8 @@ public struct HBRouterBuilder<Context: HBRouterRequestContext, Handler: Middlewa
     }
 }
 
-/// extend Router to conform to HBResponder so we can use it to process `HBRequest``
-extension HBRouterBuilder: HBResponder {
+/// extend Router to conform to Responder so we can use it to process `HBRequest``
+extension HBRouterBuilder: Responder {
     public func respond(to request: Input, context: Context) async throws -> Output {
         try await self.handle(request, context: context) { _, _ in
             throw HBHTTPError(.notFound)
