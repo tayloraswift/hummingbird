@@ -44,7 +44,7 @@ public enum EventLoopGroupProvider {
 
 public protocol HBApplicationProtocol: Service where Context: HBRequestContext {
     /// Responder that generates a response from a requests and context
-    associatedtype Responder: HBResponder
+    associatedtype Responder: HBResponder<Context>
     /// Child Channel setup. This defaults to support HTTP1
     associatedtype ChildChannel: HBChildChannel & HTTPChannelHandler = HTTP1Channel
     /// Context passed with HBRequest to responder

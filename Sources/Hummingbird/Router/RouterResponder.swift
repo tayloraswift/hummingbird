@@ -19,9 +19,9 @@
 ///
 struct HBRouterResponder<Context: HBBaseRequestContext>: HBResponder {
     let trie: RouterPathTrie<HBEndpointResponders<Context>>
-    let notFoundResponder: any HBResponder<Context>
+    let notFoundResponder: any Responder<HBRequest, HBResponse, Context>
 
-    init(context: Context.Type, trie: RouterPathTrie<HBEndpointResponders<Context>>, notFoundResponder: any HBResponder<Context>) {
+    init(context: Context.Type, trie: RouterPathTrie<HBEndpointResponders<Context>>, notFoundResponder: any Responder<HBRequest, HBResponse, Context>) {
         self.trie = trie
         self.notFoundResponder = notFoundResponder
     }

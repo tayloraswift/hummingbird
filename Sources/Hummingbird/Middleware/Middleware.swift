@@ -55,11 +55,11 @@ public protocol MiddlewareProtocol<Input, Output, Context>: Sendable {
 /// Middleware protocol with HBRequest as input and HBResponse as output
 public protocol HBMiddlewareProtocol<Context>: MiddlewareProtocol where Input == HBRequest, Output == HBResponse {}
 
-struct MiddlewareResponder<Context>: HBResponder {
-    let middleware: any MiddlewareProtocol<HBRequest, HBResponse, Context>
-    let next: @Sendable (HBRequest, Context) async throws -> HBResponse
+struct MiddlewareResponder<Input, Output, Context>: Responder {
+    let middleware: any MiddlewareProtocol<Input, Output, Context>
+    let next: @Sendable (Input, Context) async throws -> Output
 
-    func respond(to request: HBRequest, context: Context) async throws -> HBResponse {
+    func respond(to request: Input, context: Context) async throws -> Output {
         return try await self.middleware.handle(request, context: context) { request, context in
             try await self.next(request, context)
         }

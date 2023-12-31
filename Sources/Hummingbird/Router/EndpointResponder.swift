@@ -21,17 +21,17 @@ struct HBEndpointResponders<Context: HBBaseRequestContext>: Sendable {
         self.methods = [:]
     }
 
-    public func getResponder(for method: HTTPRequest.Method) -> (any HBResponder<Context>)? {
+    public func getResponder(for method: HTTPRequest.Method) -> (any Responder<HBRequest, HBResponse, Context>)? {
         return self.methods[method.rawValue]
     }
 
-    mutating func addResponder(for method: HTTPRequest.Method, responder: any HBResponder<Context>) {
+    mutating func addResponder(for method: HTTPRequest.Method, responder: any Responder<HBRequest, HBResponse, Context>) {
         guard self.methods[method.rawValue] == nil else {
             preconditionFailure("\(method.rawValue) already has a handler")
         }
         self.methods[method.rawValue] = responder
     }
 
-    var methods: [String: any HBResponder<Context>]
+    var methods: [String: any Responder<HBRequest, HBResponse, Context>]
     var path: String
 }
